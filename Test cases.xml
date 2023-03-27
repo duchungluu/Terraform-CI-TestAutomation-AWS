@@ -1,0 +1,71 @@
+1.	Ở dự án cũ dụng công cụ pipeline nào. Kinh nghiệm trên các pipeline đó là như nào? Đã từng sử dụng github action chưa? 
+-	Set up from ground up: Jenkins, TeamCity, Bamboo, Azure DevOps, Github Actions. Provocative for Github Actions: easy to adopt, control with yaml, CI as a Service, good library for various tasks, neutral platform (not like AWS CodeCommits or Azure Repo), native cloud, integrate with other cloud tools SonarQ, Bitbucket, AWS, ADO for deployment.
+
+2.	Sử dụng powershell như nào và trong việc gì?
+-	Scripting: trigger different project TeamCity, API call, invoke build, create nugget
+-	Build installer, automation, etc.
+-	Cron job
+
+3.	Cách viết code terraform ở các dự án cũ? Có viết có multi environment ko? Trên AWS có từng setup multi region chưa?
+-	Use for IaC, quite extensively, build infra for different project, provision system, GitOps, single source of truth.
+-	Yep, that’s why we need IaC, replicate, redundancy, TerraGrunt, DRY
+-	Yes, multi region, multi zone, CloudFront for origin failover, DynamoDB global replica, Amazon RDS Multi AZ, S3 Cross-Region Replication (or Same-Region or bi-directional replication)
+-	.
+-	├── dev
+-	│   ├── account.hcl
+-	│   └── us-east-1
+-	│       ├── region.hcl
+-	│       └── sqs
+-	│           └── terragrunt.hcl
+-	├── common.hcl
+-	└── terragrunt.hcl
+-	
+4.	Có sử dụng CloudFormation không? Giữa Terraform và CloudFormation thì sẽ prefer cài nào?
+-	Yes, CloudFormation used before 2-3y but hard to read, stuck with AWS
+-	Terraform works with multiple cloud providers and handle cross-cloud dependencies; provide modules which is reusable template, separate resources
+5.	Trên Serverless thì có tạo resource gì khác ngoài Lamda không? 
+-	Yes, many AWS services are serverless: AWS Fargate, DynamoDB, SQS, SNS, API Gateway, Redshift Serverless…)
+6.	Có sử dụng tool nào để moniter như là NewRelic, Datadog hay Splunk không? 
+-	Yes, CloudWatch, Cloud Trail, Grafana + Prometheus
+7.	Kinh nghiệm làm việc trên OnPrem. 
+-	Yes, used to provision the whole TeamCity + Bitbucket on prem, then Jenkins + Nexus, Kubernetes on prem, hybrid with EKS Self-managed nodes to save some old server resources
+8.	Có thường xuyên support Flex team để troubleshoot không? 
+-	Yep, dev teams always have issues with dev envs and quick fix system outage, drifting, server down, test queue ups.
+9.	Có sử dụng K8s và EKS chưa? Có sử dụng EKS fargate chưa?
+-	Yes, both K8s and EKS. 
+-	EKS Fargate vs Managed node:
+o	Fargate is that it's serverless, so you don't need for example to care about the EC2 instances right-sizing, you won't pay the idle time.
+o	EKS Fargate is slower and doesn’t have ssh, each pod is run in its own VM and container images are not cached on nodes, making the startup times for pods 1-2 minutes long
+o	Fargate is easier to use, optimized by AWS but more expensive
+10.	Có kinh nghiệm develop ngôn ngữ nào không?
+-	Python, JavaScript, powershell, bash/shell
+
+11.	Test automation for Terraform?
+
+Static code analysis: tf validate, checkov, tf lint
+Open Policy Agent (OPA) Policy as Code, compliant test, only approve resource allowed
+
+Terratest: functional test, test cases
+InfraCost: tracking cost 
+
+Use -var-file to choose .auto.tfvars to set different envs when apply
+
+AWS RDS deploy in 3 zones instead of 2 random zones, snap shot, detach, ignore skip final snaphot
+Cross-Region automated backups
+Cross-Region read replicas
+12.	Terraform Cloud: collaborate on infrastructure projects in a centralized environment, VCS, 
+a.	automation:  provision, configure, apply, functional test, 
+b.	scalability: multiple cloud, public, private, on-prem; 
+c.	security: store sensitive data, access control, encryption. 
+
+Terragrunt is a tool for managing infrastructure as code (IAC) using HashiCorp's Terraform. It provides several benefits, including:
+1.	DRY (Don't Repeat Yourself) Configuration: Terragrunt allows for code reuse by enabling you to factor out common code into reusable modules. This helps you avoid duplicating code across multiple Terraform projects and reduces the risk of errors.
+2.	Simplified Configuration: Terragrunt provides a simpler and more concise configuration syntax than Terraform, making it easier to maintain and understand your infrastructure code.
+3.	Improved Organization: Terragrunt allows for a hierarchical structure of modules, which makes it easier to organize your code and manage multiple projects. This also simplifies the process of sharing code across teams.
+4.	Automation: Terragrunt provides a command-line interface that makes it easy to automate infrastructure deployments, reducing the potential for human error.
+5.	Consistency: Terragrunt enforces a consistent workflow across teams, ensuring that all code is tested, reviewed, and deployed in a consistent manner. This helps to reduce the risk of mistakes and maintain a high level of quality in your infrastructure code.
+Overall, Terragrunt can help to improve the maintainability, organization, and automation of your infrastructure code, which can ultimately lead to faster and more reliable deployments.
+
+	
+
+
